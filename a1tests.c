@@ -53,14 +53,59 @@ void generate_selections(int a[], int n, int k, int b[], void *data, void (*proc
  * The dictionary parameter is an array of words, sorted in dictionary order.
  * nwords is the number of words in this dictionary.
  */
-void generate_splits(const char *source, const char *dictionary[], int nwords, char buf[], void *data, void (*process_split)(char buf[], void *data))
-{
-    strcpy(buf, "art is toil");
-    process_split(buf, data);
-    strcpy(buf, "artist oil");
-    process_split(buf, data);
+
+
+int check_word(const char *source, int start, int j, const char *dictionary[], int nwords){
+    char ch[j - start + 2];
+    strncpy(ch, source + start, j - start + 1);
+    ch[j - start + 1] = '\0';
+    for(int i=0;i<nwords;i++){
+        if(strcmp(dictionary[i], ch)==0){
+            return 1;
+        }
+    }
+    return 0;
 }
 
+void generate_splits_self(const char *source, const char *dictionary[], int nwords, char buf[], void *data, void (*process_split)(char buf[], void *data), int start, int bufl){
+    char w[2500];
+    // int j=0;
+    // for(int i=start; source[i]!='\0';i++){
+    //     printf("%c",source[i]);
+    // }
+    // printf("\n");
+    if(source[start]=='\0'){
+        // for(int i=0;i<bufl;i++){
+        //     printf("%c", &buf[i]);
+        // }
+        // printf("\n");
+        process_split(buf, data);
+        return;
+    }
+
+    for(int i=start; source[i]!='\0';i++){
+        buf[bufl] = source[i];
+        ++bufl;
+
+        if(check_word(source, start, i, dictionary, nwords)){
+            buf[bufl] = ' ';
+            ++bufl;
+            generate_splits_self(source, dictionary, nwords, buf, data, process_split, i+1, bufl);
+            --bufl;
+        }
+
+    }
+}
+
+void generate_splits(const char *source, const char *dictionary[], int nwords, char buf[], void *data, void (*process_split)(char buf[], void *data))
+{
+    generate_splits_self(source, dictionary, nwords, buf, data, process_split, 0, 0);
+
+    // strcpy(buf, "art is toil");
+    // process_split(buf, data);
+    // strcpy(buf, "artist oil");
+    // process_split(buf, data);
+}
 /*
  * Transform a[] so that it becomes the previous permutation of the elements in it.
  * If a[] is the first permutation, leave it unchanged.
@@ -242,7 +287,7 @@ int main()
 {
     run_tests((test_t[]) {
             TEST(generate_selections),
-            // TEST(generate_splits),
+            TEST(generate_splits),
             TEST(previous_permutation),
             0
         });
