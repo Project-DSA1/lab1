@@ -129,7 +129,7 @@ void previous_permutation(int a[], int n)
         }
     }
     for(int j=0;j<n;j++){
-        a[i] = c[i];
+        a[j] = c[j];
     }
     // printf("\n");
     // a[0] = 1;
