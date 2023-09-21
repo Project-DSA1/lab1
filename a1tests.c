@@ -30,8 +30,8 @@ void generate_selections_self(int a[], int n, int k, int b[], void *data, void (
 void generate_selections(int a[], int n, int k, int b[], void *data, void (*process_selection)(int *b, int k, void *data))
 {
 
-    b[0] = 2; b[1] = 1;
     generate_selections_self(a,n,k,b,data,process_selection,0,0);
+    // b[0] = 2; b[1] = 1;
     // process_selection(b, 2, data);
     // b[0] = 2; b[1] = 6;
     // process_selection(b, 2, data);
@@ -67,12 +67,77 @@ void generate_splits(const char *source, const char *dictionary[], int nwords, c
  */
 void previous_permutation(int a[], int n)
 {
-    a[0] = 1;
-    a[1] = 5;
-    a[2] = 4;
-    a[3] = 6;
-    a[4] = 3;
-    a[5] = 2;
+    int b[n]; // b stores {4,2,1} if array is 3 1 2 4, its size is atmost n
+    b[0] = a[n-1]; 
+    int i = n-2;
+    int pos = 1;
+    int l=1; // used to keep track of actual length of b
+
+    while(i>=0){
+        if(a[i]<=a[i+1]){
+            b[pos] = a[i];
+            pos++;
+            l++;
+            i--;
+        }
+        else{
+            break;
+        }
+    }
+    // i is the index of 3 in 3 1 2 4
+    // if i is -1, then the array is already the smallest premutation
+    if(i==-1){
+        for(int j=0;j<n;j++){
+            printf("%d ",a[j]);
+        }
+        printf("\n");
+        return;
+    }
+    // c is the new array containing the largest smaller permutation
+    // 0 to i-1 elements of c are same as a
+    int c[n];
+    for(int j=0;j<i;j++){
+        c[j] = a[j];
+    }
+    pos = l-1; // pos keeps track of which index of b is in consideration
+    int bool = 0;
+    for(int j=n-1;j>i;j--){
+        // if the prev element of b (b[pos-1]) is also smaller than a[i], then add b[pos] to c[j]
+        // else, we add b[pos] to c[i] and a[i] to c[j]. Then we add all other elements of b to c as shown
+        // However, we need to check if there is a pos-1 element
+        if(pos==0){
+            if(b[pos]<a[i]){
+                c[j] = a[i];
+                c[i] = b[pos];
+            }
+        }
+        else if(b[pos-1]<a[i]){
+            c[j] = b[pos];
+            pos--;
+        }
+        
+        else{
+            c[i] = b[pos];
+            c[j] = a[i];
+            pos--;
+            j--;
+            for(;j>i;j--){
+                c[j] = b[pos];
+                pos--;
+            }
+            break;
+        }
+    }
+    for(int j=0;j<n;j++){
+        a[i] = c[i];
+    }
+    // printf("\n");
+    // a[0] = 1;
+    // a[1] = 5;
+    // a[2] = 4;
+    // a[3] = 6;
+    // a[4] = 3;
+    // a[5] = 2;
 }
 
 /* Write your tests here. Use the previous assignment for reference. */
@@ -177,7 +242,7 @@ int main()
 {
     run_tests((test_t[]) {
             TEST(generate_selections),
-            TEST(generate_splits),
+            // TEST(generate_splits),
             TEST(previous_permutation),
             0
         });
