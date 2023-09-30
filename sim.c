@@ -91,7 +91,7 @@ int has_lost(board_t board, player_t player)
     if(board[9]==board[10] && board[9]==board[12] && board[9]==player){
         return 1;
     }
-    if(board[9]==board[11] && board[9]==board[14] && board[9]==player){
+    if(board[9]==board[11] && board[9]==board[13] && board[9]==player){
         return 1;
     }
     if(board[10]==board[11] && board[10]==board[14] && board[10]==player){
@@ -115,6 +115,25 @@ typedef struct {
     int line; /* 0 for 12, 1 for 13, ..., 14 for 56. */
     int score; /* -1 for loss, 0 for draw, 1 for win. */
 } move_t;
+
+void print_board(board_t board)
+{
+    for(int i=0;i<=9;i++){
+        printf("%d  ",i);
+    }
+    for(int i=10;i<15;i++){
+        printf("%d ",i);
+    }
+    printf("\n");
+    for (int i = 0; i < 15; ++i) {
+        switch (board[i]) {
+        case RED: printf("R  "); break;
+        case BLUE: printf("B  "); break;
+        case NO: printf("N  ");break;
+        }
+    }
+    printf("\n");
+}
 
 move_t best_move(board_t board, player_t player)
 {
@@ -168,13 +187,7 @@ move_t best_move(board_t board, player_t player)
                     .score = 1
                 };
             }
-            // else if(response.score==0){ // Game of sim always ends, this must not arise
-            //     candidate = (move_t){ // We are not checking for no_candidate here, so even if there is a candidate (which may have score -1), the score is set to 0
-            //         .line = i,
-            //         .score = 0,
-            //     };
-            //     no_candidate = 0;
-            // }
+
             else{
                 if(no_candidate){
                     candidate = (move_t){
@@ -189,25 +202,6 @@ move_t best_move(board_t board, player_t player)
     return candidate;
 }
 
-void print_board(board_t board)
-{
-    for(int i=0;i<=9;i++){
-        printf("%d  ",i);
-    }
-    for(int i=10;i<15;i++){
-        printf("%d ",i);
-    }
-    printf("\n");
-    for (int i = 0; i < 15; ++i) {
-        switch (board[i]) {
-        case RED: printf("R  "); break;
-        case BLUE: printf("B  "); break;
-        case NO: printf("N  ");break;
-        }
-    }
-    printf("\n");
-}
-
 int main()
 {
     player_t player;
@@ -216,6 +210,7 @@ int main()
     printf("Choose your color;\nR for Red and B for Blue\n");
     char playerchar;
     scanf("%c",&playerchar);
+    assert(playerchar=='R' || playerchar=='B');
     if(playerchar=='R'){
         player = RED;
     }
@@ -245,6 +240,7 @@ int main()
         }
         else{
             response = best_move(board, current);
+            printf("Computer's move:\n");
             board[response.line] = current;
         }
         if(has_lost(board, current)){
@@ -260,9 +256,5 @@ int main()
         }
         current = other_player(current);
     }
-    // print_board(board);
-    // printf("%d",player);
-    /* Your game play logic. */
-    /* The user should have the option to select red or blue player. */
     return 0;
 }
