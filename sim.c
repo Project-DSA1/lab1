@@ -38,7 +38,7 @@ void init_board(board_t board){
     }
 }
 
-int has_won(board_t board, player_t player)
+int has_lost(board_t board, player_t player)
 {
     if(board[0]==board[1] && board[0]==board[5] && board[0]==player){
         return 1;
@@ -123,10 +123,11 @@ move_t best_move(board_t board, player_t player)
     move_t response;
     int no_candidate = 1;
 
+    /* No tictactoe like block here
     for(int i=0;i<15;i++){
         if(board[i]==NO){
             board[i] = player;
-            if(has_won(board,player)){
+            if(has_lost(board,player)){
                 board[i] = NO;
                 return (move_t){
                     .line = i,
@@ -135,17 +136,29 @@ move_t best_move(board_t board, player_t player)
             }
             board[i] = NO;
         }
-    }
+    }*/
+    
     for(int i=0;i<15;i++){
         if(board[i]==NO){
             board[i] = player;
             if(is_full(board)){
                 // printf("Board is full\n");
                 board[i] = NO;
-                return (move_t){
+                return (move_t){ // The board is full and no one lost before this move, so this is the only possible move and hence has to be returned even if it leads to a loss
                     .line = i,
-                    .score = 1
+                    .score = -1 // The game always ends, so the last move leads to a loss for the player 
                 };
+            }
+            if(has_lost(board,player)){
+                board[i] = NO;
+                if(no_candidate){ 
+                    candidate = (move_t){
+                        .line = i,
+                        .score = -1,
+                    };
+                    no_candidate = 0;
+                }
+                continue;
             }
             response = best_move(board,other_player(player));
             board[i] = NO;
@@ -155,13 +168,13 @@ move_t best_move(board_t board, player_t player)
                     .score = 1
                 };
             }
-            else if(response.score==0){
-                candidate = (move_t){ // We are not checking for no_candidate here, so even if there is a candidate (which may have score -1), the score is set to 0
-                    .line = i,
-                    .score = 0,
-                };
-                no_candidate = 0;
-            }
+            // else if(response.score==0){ // Game of sim always ends, this must not arise
+            //     candidate = (move_t){ // We are not checking for no_candidate here, so even if there is a candidate (which may have score -1), the score is set to 0
+            //         .line = i,
+            //         .score = 0,
+            //     };
+            //     no_candidate = 0;
+            // }
             else{
                 if(no_candidate){
                     candidate = (move_t){
@@ -234,7 +247,7 @@ int main()
             response = best_move(board, current);
             board[response.line] = current;
         }
-        if(has_won(board, current)){
+        if(has_lost(board, current)){
             print_board(board);
             if(current == RED) printf("BLUE won.\n");
             else printf("RED won.\n");
