@@ -114,6 +114,7 @@ int is_full(board_t board)
 typedef struct {
     int line; /* 0 for 12, 1 for 13, ..., 14 for 56. */
     int score; /* -1 for loss, 0 for draw, 1 for win. */
+    unsigned long int moves;
 } move_t;
 
 void print_board(board_t board)
@@ -135,7 +136,7 @@ void print_board(board_t board)
     printf("\n");
 }
 
-move_t best_move(board_t board, player_t player)
+move_t best_move(board_t board, player_t player, int c)
 {
     // assert(!is_full(board));
     move_t candidate;
@@ -165,7 +166,8 @@ move_t best_move(board_t board, player_t player)
                 board[i] = NO;
                 return (move_t){ // The board is full and no one lost before this move, so this is the only possible move and hence has to be returned even if it leads to a loss
                     .line = i,
-                    .score = -1 // The game always ends, so the last move leads to a loss for the player 
+                    .score = -1, // The game always ends, so the last move leads to a loss for the player 
+                    .moves = 1,
                 };
             }
             if(has_lost(board,player)){
@@ -174,27 +176,32 @@ move_t best_move(board_t board, player_t player)
                     candidate = (move_t){
                         .line = i,
                         .score = -1,
+                        .moves = 1,
                     };
                     no_candidate = 0;
                 }
                 continue;
             }
-            response = best_move(board,other_player(player));
+            response = best_move(board,other_player(player),c+1);
             board[i] = NO;
             if(response.score==-1){
                 return (move_t){
                     .line = i,
-                    .score = 1
+                    .score = 1,
+                    .moves = response.moves + 1,
                 };
             }
 
             else{
-                if(no_candidate){
+                if(no_candidate || candidate.moves < (response.moves + 1)){
                     candidate = (move_t){
                         .line = i,
                         .score = -1,
+                        .moves = response.moves + 1,
                     };
-                    no_candidate = 0;
+                    if(no_candidate){
+                        no_candidate = 0;
+                    }
                 }
             }
         }
@@ -207,7 +214,7 @@ int main()
     player_t player;
     board_t board;
     printf("Welcome to the Game of Sim\n");
-    printf("Choose your color;\nR for Red and B for Blue\n");
+    printf("Choose your color: R for Red and B for Blue\n");
     char playerchar;
     scanf("%c",&playerchar);
     assert(playerchar=='R' || playerchar=='B');
@@ -218,9 +225,12 @@ int main()
         player = BLUE;
     }
     init_board(board);
-    player_t current = player;
+    player_t current = RED; // Red plays first
     move_t response;
     int move;
+    printf("Your sim board:\n");
+    print_board(board);
+    printf("Game begins, Red plays first!\n");
     /* Bug test - No bug detected. Output: Perfect (Expected output)
     board[0] = RED;
     board[1] = BLUE;
@@ -230,21 +240,31 @@ int main()
     else{
         printf("Perfect");
     }*/
+
+    // if(player==BLUE){
+    //     board[0] = RED;
+    //     current = other_player(current);
+    //     print_board(board);
+    // }
+
     while(1){
-        print_board(board);
         if(current == player){
             printf("Enter your move: ");
             scanf("%d",&move);
             assert(board[move]==NO);
             board[move] = current;
+            print_board(board);
+            printf("\n");
         }
         else{
-            response = best_move(board, current);
-            printf("Computer's move:\n");
+            response = best_move(board, current,0);
+            printf("Computer's move: %d\n",response.line);
             board[response.line] = current;
+            print_board(board);
+            printf("\n");
         }
         if(has_lost(board, current)){
-            print_board(board);
+            // print_board(board);
             if(current == RED) printf("BLUE won.\n");
             else printf("RED won.\n");
             break;
