@@ -4,13 +4,13 @@
 
 #define board_rows (4)
 #define board_columns (5)
-#define MAX_ORD (3486784400)
+#define MAX_ORD (1)
 #define connect (4)
 
 typedef char player_t;
 typedef char board_t[board_rows][board_columns];
 
-uint16_t computed_moves[MAX_ORD+1];
+uint8_t computed_moves[MAX_ORD+1];
 
 int min_personal(int a,int b){
     if (a>b){return b;}
@@ -39,29 +39,26 @@ void print_board(board_t board){
 }
 
 typedef struct {
-    int row;
     int col;
     int score;
 } move_t;
 
-uint16_t encode_move(move_t move){
-    uint16_t b = 0;
-    assert(0<=move.row && move.row<5);
-    b |= move.row;
+uint8_t encode_move(move_t move){
+    uint8_t b = 0;
 
     assert(0<=move.col && move.col<=5);
-    b |= move.col << 3;
+    b |= move.col;
 
     switch (move.score)
     {
     case -1:
-        b |= 1 << 6;
+        b |= 1 << 3;
         break;
     case 0:
-        b |= 1 << 7;
+        b |= 1 << 4;
         break;
     case 1:
-        b |= 1 << 8;
+        b |= 1 << 5;
         break;
     default:
         break;
@@ -69,13 +66,12 @@ uint16_t encode_move(move_t move){
     return b;
 }
 
-uint16_t decode_move(uint16_t b){
+uint8_t decode_move(uint8_t b){
     move_t move;
-    move.row = b & 0x7;
-    move.col = ((b >> 3) & 0x7);
-    if ((b >> 6) & 0x1) move.score = -1;
-    else if ((b >> 7) & 0x1) move.score = -1;
-    else if ((b >> 8) & 0x1) move.score = -1;
+    move.col = ((b) & 0x7);
+    if ((b >> 3) & 0x1) move.score = -1;
+    else if ((b >> 4) & 0x1) move.score = -1;
+    else if ((b >> 5) & 0x1) move.score = -1;
 }
 
 int has_won(board_t board, player_t player){
@@ -145,6 +141,32 @@ int has_won(board_t board, player_t player){
         return 1;
     }
     return 0;
+}
+
+int is_full(board_t board){
+    for (int row = 0; row < board_rows; row++)
+    {
+            for (int col = 0; col < board_columns; col++)
+            {
+                if(board[row][col]=='.') return 0;
+            }
+            
+    }
+    return 1;
+}
+
+player_t other_player(player_t player){
+    switch (player)
+    {
+    case 'x':
+        return 'o';
+        break;
+    case 'o':
+        return 'x';
+        break;
+    default:
+        assert(0);
+    }
 }
 
 
