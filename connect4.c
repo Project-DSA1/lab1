@@ -66,12 +66,17 @@ uint8_t encode_move(move_t move){
     return b;
 }
 
-uint8_t decode_move(uint8_t b){
+move_t decode_move(uint8_t b){
     move_t move;
     move.col = ((b) & 0x7);
     if ((b >> 3) & 0x1) move.score = -1;
-    else if ((b >> 4) & 0x1) move.score = -1;
-    else if ((b >> 5) & 0x1) move.score = -1;
+    else if ((b >> 4) & 0x1) move.score = 0;
+    else if ((b >> 5) & 0x1) move.score = 1;
+}
+
+char* decode_index(int i){
+    int x = i + 1;
+
 }
 
 int has_won(board_t board, player_t player){
