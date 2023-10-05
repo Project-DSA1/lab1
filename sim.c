@@ -251,6 +251,7 @@ int main()
         if(current == player){
             printf("Enter your move: ");
             scanf("%d",&move);
+            assert(move>=0 && move<15);
             assert(board[move]==NO);
             board[move] = current;
             print_board(board);
