@@ -14,12 +14,6 @@ typedef char board_t[board_rows][board_columns];
 
 int computed_moves[col_combinations][col_combinations][col_combinations][col_combinations][col_combinations];
 
-enum {
-    EMPTY = 0,
-    RED,
-    BLUE,
-};
-
 int min_personal(int a,int b){
     if (a>b){return b;}
     else{return a;}
@@ -246,16 +240,16 @@ int* my_ord(board_t board,int* track){
 move_t best_move(board_t board, player_t player, int move_ctr){
 
     move_t response;
+    move_t winning_candidate;
+    int no_win = 1;
     move_t candidate;
-
+    int no_candidate = 1;
     int no_candidate_loss = 1;
     int no_candidate_draw = 1;
-    int no_candidate = 1;
-
+    // int no_candidate = 1;
     assert(!is_full(board));
     assert(!has_won(board, player));
     assert(!has_won(board, other_player(player)));
-
     int track[5] = {0,0,0,0,0};
 
     for (int col = 0; col < board_columns; col++)
@@ -272,6 +266,7 @@ move_t best_move(board_t board, player_t player, int move_ctr){
     for (int i = 0; i < 5; i++) {
         ord[i] = *(ptr + i);
     }
+
 
     if (computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]]){
         return decode_move(computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]]);
@@ -310,16 +305,19 @@ move_t best_move(board_t board, player_t player, int move_ctr){
                 return candidate;
             }
 
-            response = best_move(board, other_player(player),move_ctr+1);
+            response = best_move(board, other_player(player),0);
 
             board[board_rows-track[col]-1][col] = '.';
             if (response.score == -1) {
-                    computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]] = encode_move(candidate = (move_t) {
+                if(no_win || winning_candidate.time > response.time + 1){
+                    winning_candidate = (move_t) {
                         .col = col,
                         .score = 1,
                         .time = response.time + 1
-                        });
-                    return candidate;
+                        };
+                        no_win = 0;
+                    }
+                    // return candidate;
                 } else if (response.score == 0) {
                     if(no_candidate_draw)
                     candidate = (move_t) {
@@ -327,7 +325,6 @@ move_t best_move(board_t board, player_t player, int move_ctr){
                         .score = 0,
                         .time = response.time + 1
                     };
-                    no_candidate_draw = 0;
                     no_candidate = 0;
                 } else { /* response.score == +1 */
                     if (no_candidate_draw && (no_candidate || (candidate.time < response.time + 1))) {
@@ -341,6 +338,10 @@ move_t best_move(board_t board, player_t player, int move_ctr){
                 }
         }
 
+    }
+    if(no_win==0){
+        computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]] = encode_move(winning_candidate);
+        return winning_candidate;
     }
     computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]] = encode_move(candidate);
     return candidate;
@@ -403,7 +404,7 @@ int main(){
             printf("Computer's turn, column : ");
             response = best_move(board, current,0);
             printf("%d\n", response.col);
-            // printf("%d\n",response.score);
+            // printf("%d",response.score);
             board[board_rows-track[response.col]-1][response.col] = current;
         }
         if (has_won(board, current)) {
