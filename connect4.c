@@ -20,6 +20,13 @@ enum {
     BLUE,
 };
 
+int Pow(int x,int n){
+    int to_ret = 1;
+    for(int i=0;i<n;i++){ to_ret *= x;}
+    return to_ret;
+}
+
+
 int min_personal(int a,int b){
     if (a>b){return b;}
     else{return a;}
@@ -223,13 +230,13 @@ int* my_ord(board_t board,int* track){
 
         for (int i = 1; i < track[col]; i++)
         {
-            temp += pow(2,i);
+            temp += Pow(2,i);
         }
         int temp2 = 0;
         for (int j = 0; j < track[col]; j++)
         {
             if (board[board_rows-j-1][col] == 'x'){
-                temp2 += pow(2,j);
+                temp2 += Pow(2,j);
             }
         }
         indexing[col] = temp + temp2;
