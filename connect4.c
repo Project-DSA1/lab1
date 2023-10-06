@@ -387,7 +387,7 @@ int main(){
         print_board(board);
         if (current == player) {
             print_key();
-            printf("Enter your move: ");
+            printf("Enter your move (column): ");
             scanf("%d", &move);
             assert(0<=move & move<board_columns);
             col = move;
@@ -395,8 +395,9 @@ int main(){
             assert(board[board_rows-track[col]-1][col] == '.');
             board[board_rows-track[col]-1][col] = current;
         } else {
-            printf("Computer's turn :\n");
+            printf("Computer's turn, column : ");
             response = best_move(board, current,0);
+            printf("%d\n", response.col);
             board[board_rows-track[response.col]-1][response.col] = current;
         }
         if (has_won(board, current)) {
