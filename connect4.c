@@ -208,10 +208,8 @@ int* my_ord(board_t board,int* track){
     return indexing;
 }
 
-int count;
 move_t best_move(board_t board, player_t player){
-    count++;
-    printf("%d\n",count);
+
     move_t response;
     move_t candidate;
     int no_candidate = 1;
@@ -219,14 +217,16 @@ move_t best_move(board_t board, player_t player){
     assert(!has_won(board, player));
     assert(!has_won(board, other_player(player)));
     int track[5] = {0,0,0,0,0};
+
     for (int col = 0; col < board_columns; col++)
-    {
-        for (int row = 0; row < board_rows; row++)
-        {
+    {   
+        for (int row = board_rows-1; row >=0; row--)
+        {   
             if (board[row][col] == '.'){break;}
             else{track[col]++;}
         }
-    }
+    }   
+
     int* ptr = my_ord(board, track);
     int ord[5];
     for (int i = 0; i < 5; i++) {
@@ -237,13 +237,15 @@ move_t best_move(board_t board, player_t player){
     if (computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]]){
         return decode_move(computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]]);
     }
-    printf("%d\n",computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]]);
+
+    // printf("%d\n",computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]]);
     for (int col = 0; col < board_columns; col++)
-    {   printf("nai yaar avu nai\n");
+    {   
         if (track[col] != board_rows){
-            board[board_rows-track[col]-2][col] = player;
+            board[board_rows-track[col]-1][col] = player;
             if (has_won(board,player)){
-                board[board_rows-track[col]-2][col] = '.';
+
+                board[board_rows-track[col]-1][col] = '.';
                 candidate = (move_t) {
                         .col = col,
                         .score = 1
@@ -251,15 +253,15 @@ move_t best_move(board_t board, player_t player){
                 computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]] = encode_move(candidate);
                 return candidate;
             }
-            board[board_rows-track[col]-2][col] = '.' ;
+            board[board_rows-track[col]-1][col] = '.' ;
         }
     }
     for (int col = 0; col < board_columns; col++)
     {
         if (track[col] != board_rows){
-            board[board_rows-track[col]-2][col] = player;
+            board[board_rows-track[col]-1][col] = player;
             if (is_full(board)){
-                board[board_rows-track[col]-2][col] = '.';
+                board[board_rows-track[col]-1][col] = '.';
                 candidate = (move_t) {
                         .col = col,
                         .score = 0
@@ -267,9 +269,10 @@ move_t best_move(board_t board, player_t player){
                 computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]] = encode_move(candidate);
                 return candidate;
             }
+
             response = best_move(board, other_player(player));
-            printf("nahi\n");
-            board[board_rows-track[col]-2][col] = '.';
+
+            board[board_rows-track[col]-1][col] = '.';
             if (response.score == -1) {
                     computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]] = encode_move(candidate = (move_t) {
                         .col = col,
@@ -291,8 +294,6 @@ move_t best_move(board_t board, player_t player){
                         no_candidate = 0;
                     }
                 }
-                printf("haan\n");
-                exit(0);
         }
 
     }
@@ -314,81 +315,53 @@ void print_key()
 
 
 int main(){
-
-    // move_t move;
-    // move.score = 1;
-    // move.col = 4;
-    // move.time = 20;
-    // uint16_t dd = encode_move(move);
-    // printf("%d", dd);
-    // move_t ne = decode_move(dd);
-    // printf(" %d %d %d \n",ne.col,ne.score,ne.time);
-    
-    
-    // board_t board;
-    // init_board(board);
-    // print_board(board);
-    // for (int i = 0; i < board_rows; i++)
-    // {
-    //     for (int j = 0; j < board_columns; j++)
-    //     {
-    //         scanf(" %c",&board[i][j]);
-    //         print_board(board);
-    //     } 
-    // }
-    
-    // player_t player = 'x';
-
-    // printf("%d\n",has_won(board,player));
-    // return 0;
-
     int move, col;
     board_t board;
     move_t response;
     player_t current = 'x';
     init_board(board);
-    board[4][0] = 'x';
-    move_t re = best_move(board,current);
-    printf("%d\n",re.col);
-    // while (1) {
-    //     int track[5] = {0,0,0,0,0};
+ 
+    while (1) {
+        int track[5] = {0,0,0,0,0};
 
-    //     for (int col = 0; col < board_columns; col++)
-    //     {
-    //         for (int row = 0; row < board_rows; row++)
-    //         {
-    //             if (board[board_rows-row-1][col] == '.'){break;}
-    //             else{track[col] = track[col] + 1;}
-    //         }
-    //     }
+        for (int col = 0; col < board_columns; col++)
+        {
+            for (int row = board_rows-1; row >= 0 ; row--)
+            {
+                if (board[row][col] == '.'){break;}
+                else{track[col]++;}
+            }
+        }
 
 
-    //     print_board(board);
-    //     if (current == 'x') {
-    //         print_key();
-    //         printf("Enter your move: ");
-    //         scanf("%d", &move);
-    //         assert(0<=move & move<board_columns);
-    //         col = move;
+        print_board(board);
+        if (current == 'x') {
+            print_key();
+            printf("Enter your move: ");
+            scanf("%d", &move);
+            assert(0<=move & move<board_columns);
+            col = move;
 
-    //         assert(board[board_rows-track[col]-2][col] == '.');
-    //         board[board_rows-track[col]-1][col] = current;
-    //     } else {
+            assert(board[board_rows-track[col]-1][col] == '.');
+            board[board_rows-track[col]-1][col] = current;
+        } else {
 
-    //         response = best_move(board, current);
-    //         board[board_rows-track[response.col]-2][response.col] = current;
-    //     }
-    //     if (has_won(board, current)) {
-    //         print_board(board);
-    //         printf("Player %c has won!\n", current);
-    //         break;
-    //     } else if (is_full(board)) {
-    //         print_board(board);
-    //         printf("Draw.\n");
-    //         break;
-    //     }
-    //     current = other_player(current);
-    // }
+            response = best_move(board, current);
+            board[board_rows-track[response.col]-1][response.col] = current;
+        }
+        if (has_won(board, current)) {
+            print_board(board);
+            printf("\n\n");
+            printf("Player %c has won!\n", current);
+            break;
+        } else if (is_full(board)) {
+            print_board(board);
+            printf("\n\n");
+            printf("Draw.\n");
+            break;
+        }
+        current = other_player(current);
+    }
 
     return 0;
 
