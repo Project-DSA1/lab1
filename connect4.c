@@ -20,8 +20,6 @@ enum {
     BLUE,
 };
 
-
-
 int min_personal(int a,int b){
     if (a>b){return b;}
     else{return a;}
@@ -74,7 +72,7 @@ uint16_t encode_move(move_t move){
     default:
         break;
     }
-    assert(0<=move.time && move.time <= (board_columns)*(board_rows));
+    // assert(0<=move.time && move.time <= (board_columns)*(board_rows));
     b |= (move.time << 6);
     return b;
 }
@@ -89,6 +87,73 @@ move_t decode_move(uint16_t b){
     return move;
 }
 
+// This is your has_won function:
+// int has_won(board_t board, player_t player){
+//     for (int row = 0; row < board_rows; row++)
+//     {   int temp = 0;
+//         for (int col = 0; col < board_columns; col++)
+//         {
+//                 if (board[row][col] == player) {temp += 1;}
+//                 else {temp = 0;}
+//                 if (temp == connect) {goto found;}
+//         }
+//     }
+//     for (int col = 0; col < board_columns; col++)
+//     {   int temp = 0;
+//         for (int row = 0; row < board_rows; row++)
+//         {
+//             if (board[row][col] == player) {temp += 1;}
+//             else {temp = 0;}
+//             if (temp == connect) {goto found;}
+//         }   
+//     }
+//     // Cheking for the normal diagonals 
+//     for (int row = 0; row < board_rows - connect + 1; row++)
+//     {
+//         int ref = 0;
+//         for (int iter = 0; iter < min_personal(board_rows - row,board_columns); iter++)
+//         {
+//                 if (board[row+iter][iter] == player) {ref += 1;}
+//                 else {ref = 0;}
+//                 if (ref == connect) {goto found;}
+//         }
+//     }
+//     for (int col = 1; col < board_columns - connect + 1; col++)
+//     {
+//         int ref = 0;
+//         for (int iter = 0; iter < min_personal(board_columns - col,board_rows); iter++)
+//         {
+//                 if (board[iter][col+iter] == player) {ref += 1;}
+//                 else {ref = 0;}
+//                 if (ref == connect) {goto found;}
+//         }
+//     }
+//     for (int row = connect - 1; row < board_rows; row++)
+//     {   int ref = 0;
+//         for (int iter = 0; iter < min_personal(board_columns,board_rows - row); iter++)
+//         {
+//                 if (board[row - iter][iter] == player) {ref += 1;}
+//                 else {ref = 0;}
+//                 if (ref == connect) {goto found;}
+//         }    
+//     }
+//     for (int col = 0; col < board_columns - connect + 1; col++)
+//     {
+//         int ref = 0;
+//         for (int iter = 0; iter < min_personal(board_rows,board_columns - col); iter++)
+//         {
+//                 if (board[board_rows - 1 - iter][col + iter] == player) {ref += 1;}
+//                 else {ref = 0;}
+//                 if (ref == connect) {goto found;}
+//         }       
+//     }
+//     if (0){
+//         found:
+//         return 1;
+//     }
+//     return 0;
+// }
+
 int has_won(board_t board, player_t player){
     for (int row = 0; row < board_rows; row++)
     {   int temp = 0;
@@ -96,7 +161,7 @@ int has_won(board_t board, player_t player){
         {
                 if (board[row][col] == player) {temp += 1;}
                 else {temp = 0;}
-                if (temp == connect) {goto found;}
+                if (temp == connect) {return 1;}
         }
     }
     for (int col = 0; col < board_columns; col++)
@@ -105,58 +170,24 @@ int has_won(board_t board, player_t player){
         {
             if (board[row][col] == player) {temp += 1;}
             else {temp = 0;}
-            if (temp == connect) {goto found;}
+            if (temp == connect) {return 1;}
         }   
     }
-    // Cheking for the normal diagonals 
-    for (int row = 0; row < board_rows - connect + 1; row++)
-    {
-        int ref = 0;
-        for (int iter = 0; iter < min_personal(board_rows - row,board_columns); iter++)
-        {
-                if (board[row+iter][iter] == player) {ref += 1;}
-                else {ref = 0;}
-                if (ref == connect) {goto found;}
-        }
+    if(board[0][0]==board[1][1] && board[0][0]==board[2][2] && board[0][0]==board[3][3] && board[0][0]!='.'){
+        return 1;
     }
-    for (int col = 1; col < board_columns - connect + 1; col++)
-    {
-        int ref = 0;
-        for (int iter = 0; iter < min_personal(board_columns - col,board_rows); iter++)
-        {
-                if (board[iter][col+iter] == player) {ref += 1;}
-                else {ref = 0;}
-                if (ref == connect) {goto found;}
-        }
+    if(board[0][1]==board[1][2] && board[0][1]==board[2][3] && board[0][1]==board[3][4] && board[0][1]!='.'){
+        return 1;
     }
-    for (int row = connect - 1; row < board_rows; row++)
-    {   int ref = 0;
-        for (int iter = 0; iter < min_personal(board_columns,board_rows - row); iter++)
-        {
-                if (board[row - iter][iter] == player) {ref += 1;}
-                else {ref = 0;}
-                if (ref == connect) {goto found;}
-        }
-        
+    if(board[0][3]==board[1][2] && board[0][3]==board[2][1] && board[0][3]==board[3][0] && board[0][3]!='.'){
+        return 1;
     }
-    for (int col = 0; col < board_columns - connect + 1; col++)
-    {
-        int ref = 0;
-        for (int iter = 0; iter < min_personal(board_rows,board_columns - col); iter++)
-        {
-                if (board[board_rows - 1 - iter][col + iter] == player) {ref += 1;}
-                else {ref = 0;}
-                if (ref == connect) {goto found;}
-        }
-        
-    }
-
-    if (0){
-        found:
+    if(board[0][4]==board[1][3] && board[0][4]==board[2][2] && board[0][4]==board[3][1] && board[0][4]!='.'){
         return 1;
     }
     return 0;
 }
+
 
 int is_full(board_t board){
     for (int row = 0; row < board_rows; row++)
@@ -207,7 +238,7 @@ int* my_ord(board_t board,int* track){
     return indexing;
 }
 
-move_t best_move(board_t board, player_t player){
+move_t best_move(board_t board, player_t player, int move_ctr){
 
     move_t response;
     move_t candidate;
@@ -246,7 +277,8 @@ move_t best_move(board_t board, player_t player){
                 board[board_rows-track[col]-1][col] = '.';
                 candidate = (move_t) {
                         .col = col,
-                        .score = 1
+                        .score = 1,
+                        .time = 1
                         };
                 computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]] = encode_move(candidate);
                 return candidate;
@@ -262,32 +294,37 @@ move_t best_move(board_t board, player_t player){
                 board[board_rows-track[col]-1][col] = '.';
                 candidate = (move_t) {
                         .col = col,
-                        .score = 0
+                        .score = 0,
+                        .time=1
                         };
                 computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]] = encode_move(candidate);
                 return candidate;
             }
 
-            response = best_move(board, other_player(player));
+            response = best_move(board, other_player(player),0);
 
             board[board_rows-track[col]-1][col] = '.';
             if (response.score == -1) {
                     computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]] = encode_move(candidate = (move_t) {
                         .col = col,
-                        .score = 1
+                        .score = 1,
+                        .time = response.time + 1
                         });
                     return candidate;
                 } else if (response.score == 0) {
+                    if(no_candidate || (candidate.time < response.time + 1))
                     candidate = (move_t) {
                         .col = col,
-                        .score = 0
+                        .score = 0,
+                        .time = response.time + 1
                     };
                     no_candidate = 0;
                 } else { /* response.score == +1 */
-                    if (no_candidate) {
+                    if (no_candidate || (candidate.time < response.time + 1)) {
                         candidate = (move_t) {
                             .col = col,
-                            .score = -1
+                            .score = -1,
+                            .time = response.time + 1
                         };
                         no_candidate = 0;
                     }
@@ -310,8 +347,6 @@ void print_key()
     printf("\n");
 }
 
-
-
 int main(){
     int move, col;
     board_t board;
@@ -331,7 +366,6 @@ int main(){
             }
         }
 
-
         print_board(board);
         if (current == 'x') {
             print_key();
@@ -344,7 +378,7 @@ int main(){
             board[board_rows-track[col]-1][col] = current;
         } else {
             printf("Computer's turn :\n");
-            response = best_move(board, current);
+            response = best_move(board, current,0);
             board[board_rows-track[response.col]-1][response.col] = current;
         }
         if (has_won(board, current)) {
