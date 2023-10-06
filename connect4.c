@@ -349,12 +349,10 @@ int main(){
         }
         if (has_won(board, current)) {
             print_board(board);
-            printf("\n\n");
             printf("Player %c has won!\n", current);
             break;
         } else if (is_full(board)) {
             print_board(board);
-            printf("\n\n");
             printf("Draw.\n");
             break;
         }
