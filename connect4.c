@@ -343,7 +343,7 @@ int main(){
             assert(board[board_rows-track[col]-1][col] == '.');
             board[board_rows-track[col]-1][col] = current;
         } else {
-
+            printf("Computer's turn :\n");
             response = best_move(board, current);
             board[board_rows-track[response.col]-1][response.col] = current;
         }
