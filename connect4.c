@@ -6,11 +6,20 @@
 #define board_columns (5)
 #define MAX_ORD (1)
 #define connect (4)
+#define col_combinations (31)
 
 typedef char player_t;
 typedef char board_t[board_rows][board_columns];
 
-uint8_t computed_moves[MAX_ORD+1];
+int counted_moves[col_combinations][col_combinations][col_combinations][col_combinations][col_combinations];
+
+enum {
+    EMPTY = 0,
+    RED,
+    BLUE,
+};
+
+
 
 int min_personal(int a,int b){
     if (a>b){return b;}
@@ -41,12 +50,13 @@ void print_board(board_t board){
 typedef struct {
     int col;
     int score;
+    int time;
 } move_t;
 
-uint8_t encode_move(move_t move){
-    uint8_t b = 0;
+uint16_t encode_move(move_t move){
+    uint16_t b = 0;
 
-    assert(0<=move.col && move.col<=5);
+    assert(0<=move.col && move.col<board_columns);
     b |= move.col;
 
     switch (move.score)
@@ -63,20 +73,19 @@ uint8_t encode_move(move_t move){
     default:
         break;
     }
+    assert(0<=move.time && move.time <= (board_columns)*(board_rows));
+    b |= (move.time << 6);
     return b;
 }
 
-move_t decode_move(uint8_t b){
+move_t decode_move(uint16_t b){
     move_t move;
     move.col = ((b) & 0x7);
     if ((b >> 3) & 0x1) move.score = -1;
     else if ((b >> 4) & 0x1) move.score = 0;
     else if ((b >> 5) & 0x1) move.score = 1;
-}
-
-char* decode_index(int i){
-    int x = i + 1;
-
+    move.time = (b >> 6);
+    return move;
 }
 
 int has_won(board_t board, player_t player){
@@ -174,23 +183,113 @@ player_t other_player(player_t player){
     }
 }
 
+int* ord(board_t board,int* track){}
+
+
+move_t best_move(board_t board, player_t player){
+    move_t response;
+    move_t candidate;
+    int no_candidate = 1;
+    assert(!is_full(board));
+    assert(!has_won(board, player));
+    assert(!has_won(board, other_player(player)));
+    int track[5] = {0,0,0,0,0};
+    for (int col = 0; col < board_columns; col++)
+    {
+        for (int row = 0; row < board_rows; row++)
+        {
+            if (board[row][col] == '.'){break;}
+            else{track[col]++;}
+        }
+    }
+    
+    int* ord = {0};
+
+    for (int col = 0; col < board_columns; col++)
+    {
+        if (track[col] != board_rows){
+            board[board_rows-track[col]-1][col] = player;
+            if (has_won(board,player)){
+                board[board_rows-track[col]-1][col] = '.';
+                candidate = (move_t) {
+                        .col = col,
+                        .score = 1
+                        };
+                return candidate;
+            }
+            board[board_rows-track[col]-1][col] = '.' ;
+        }
+    }
+
+    for (int col = 0; col < board_columns; col++)
+    {
+        if (track[col] != board_rows){
+            board[board_rows-track[col]-1][col] = player;
+            if (is_full(board)){
+                board[board_rows-track[col]-1][col] = '.';
+                candidate = (move_t) {
+                        .col = col,
+                        .score = 0
+                        };
+                return candidate;
+            }
+            response = best_move(board, other_player(player));
+            board[board_rows-track[col]-1][col] = '.';
+            if (response.score == -1) {
+                    computed_moves[o] = encode_move(candidate = (move_t) {
+                        .col = col,
+                        .score = 1
+                        });
+                    return candidate;
+                } else if (response.score == 0) {
+                    candidate = (move_t) {
+                        .col = col,
+                        .score = 0
+                    };
+                    no_candidate = 0;
+                } else { /* response.score == +1 */
+                    if (no_candidate) {
+                        candidate = (move_t) {
+                            .col = col,
+                            .score = -1
+                        };
+                        no_candidate = 0;
+                    }
+                }
+        }
+
+    }
+    
+    
+}
 
 
 int main(){
-    board_t board;
-    init_board(board);
-    print_board(board);
-    for (int i = 0; i < board_rows; i++)
-    {
-        for (int j = 0; j < board_columns; j++)
-        {
-            scanf(" %c",&board[i][j]);
-            print_board(board);
-        } 
-    }
-    
-    player_t player = 'x';
 
-    printf("%d\n",has_won(board,player));
-    return 0;
+    // move_t move;
+    // move.score = 1;
+    // move.col = 4;
+    // move.time = 20;
+    // uint16_t dd = encode_move(move);
+    // printf("%d", dd);
+    // move_t ne = decode_move(dd);
+    // printf(" %d %d %d \n",ne.col,ne.score,ne.time);
+    
+    
+    // board_t board;
+    // init_board(board);
+    // print_board(board);
+    // for (int i = 0; i < board_rows; i++)
+    // {
+    //     for (int j = 0; j < board_columns; j++)
+    //     {
+    //         scanf(" %c",&board[i][j]);
+    //         print_board(board);
+    //     } 
+    // }
+    
+    // player_t player = 'x';
+
+    // printf("%d\n",has_won(board,player));
+    // return 0;
 }
