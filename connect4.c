@@ -197,7 +197,6 @@ int* my_ord(board_t board,int* track){
         int temp2 = 0;
         for (int j = 0; j < track[col]; j++)
         {
-            // board_rows-track[col]-1
             if (board[board_rows-j-1][col] == 'x'){
                 temp2 += pow(2,j);
             }
@@ -238,7 +237,6 @@ move_t best_move(board_t board, player_t player){
         return decode_move(computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]]);
     }
 
-    // printf("%d\n",computed_moves[ord[0]][ord[1]][ord[2]][ord[3]][ord[4]]);
     for (int col = 0; col < board_columns; col++)
     {   
         if (track[col] != board_rows){
