@@ -20,13 +20,6 @@ enum {
     BLUE,
 };
 
-int Pow(int x,int n){
-    int to_ret = 1;
-    for(int i=0;i<n;i++){ to_ret *= x;}
-    return to_ret;
-}
-
-
 int min_personal(int a,int b){
     if (a>b){return b;}
     else{return a;}
@@ -230,13 +223,13 @@ int* my_ord(board_t board,int* track){
 
         for (int i = 1; i < track[col]; i++)
         {
-            temp += Pow(2,i);
+            temp += pow(2,i);
         }
         int temp2 = 0;
         for (int j = 0; j < track[col]; j++)
         {
             if (board[board_rows-j-1][col] == 'x'){
-                temp2 += Pow(2,j);
+                temp2 += pow(2,j);
             }
         }
         indexing[col] = temp + temp2;
@@ -347,9 +340,7 @@ void print_key()
 {
     int ii = 0;
     for (int col = 0; col < board_columns; ++col) {
-        
             printf("%3d ", ii++);
-        
     }
     printf("\n");
 }
@@ -358,6 +349,21 @@ int main(){
     int move, col;
     board_t board;
     move_t response;
+    player_t player;
+
+    printf("Welcome to the Connect 4 game!\n");
+    printf("Player 'x' plays first!\n");
+    printf("To choose your peg, enter 'x' or 'o':\n");
+    char playerchar;
+    scanf("%c",&playerchar);
+    assert(playerchar=='x' || playerchar=='o');
+    if(playerchar=='x'){
+        player = 'x';
+    }
+    else{
+        player = 'o';
+    }
+
     player_t current = 'x';
     init_board(board);
  
@@ -374,7 +380,7 @@ int main(){
         }
 
         print_board(board);
-        if (current == 'x') {
+        if (current == player) {
             print_key();
             printf("Enter your move: ");
             scanf("%d", &move);
@@ -399,7 +405,5 @@ int main(){
         }
         current = other_player(current);
     }
-
     return 0;
-
 }
