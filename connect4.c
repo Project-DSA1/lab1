@@ -298,33 +298,6 @@ int main(){
         computed_moves[i] = 0;
     }
 
-    // move_t move;
-    // move.score = 1;
-    // move.col = 4;
-    // move.time = 20;
-    // uint16_t dd = encode_move(move);
-    // printf("%d", dd);
-    // move_t ne = decode_move(dd);
-    // printf(" %d %d %d \n",ne.col,ne.score,ne.time);
-    
-    
-    // board_t board;
-    // init_board(board);
-    // print_board(board);
-    // for (int i = 0; i < board_rows; i++)
-    // {
-    //     for (int j = 0; j < board_columns; j++)
-    //     {
-    //         scanf(" %c",&board[i][j]);
-    //         print_board(board);
-    //     } 
-    // }
-    
-    // player_t player = 'x';
-
-    // printf("%d\n",has_won(board,player));
-    // return 0;
-
     int col;
     board_t board;
     move_t response;
@@ -346,10 +319,6 @@ int main(){
     player_t current = 'x';
     init_board(board);
 
-    // board[4][0] = 'x';
-    // move_t re = best_move(board,current);
-    // printf("%d\n",re.col);
-
     while(1) {
         int track[5] = {0,0,0,0,0};
         for (int col = 0; col < board_columns; col++)
@@ -367,7 +336,7 @@ int main(){
             // printf("%d\n",track[1]);
             printf("Enter your move: ");
             scanf("%d", &col);
-            //assert(0<=col & col<board_columns);
+            assert(0<=col & col<board_columns);
             // col = move;
 
             //assert(board[board_rows-track[col]-1][col] == '.');
