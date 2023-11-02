@@ -1,5 +1,4 @@
 #include<stdio.h>
-#include<stdbool.h>
 // L = 0 , U = 1, R =2, D = 3
 char MoveNames[4][2] = {"L","U","R","D"};
 int revMoves[4] = {2,3,0,1};
