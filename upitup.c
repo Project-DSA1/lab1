@@ -90,7 +90,7 @@ int Update(int findSol=1){
     int loc = Lque[cur];
     int S = Sque[cur];
     if((findSol)&&(N<9)){
-        printf("solution : ");
+        printf("solution (operation order is from right to left): ");
         if(S==0){
             printf("Do nothing.");
         }
