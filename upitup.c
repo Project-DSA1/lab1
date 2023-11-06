@@ -103,7 +103,7 @@ int Update(int findSol){
             S = S/5;
             printf("%s",MoveNames[move]);
         }
-        printf(" (Read this from back to front!)\nsolution occured after %d checks\n Final condition : \n",cur+1);
+        printf("\nsolution occured after %d checks\n Final condition : \n",cur+1);
         ToM(N,M);
         Disp(M);
         return 1;
