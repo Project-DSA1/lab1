@@ -15,7 +15,7 @@ int Doff[2] = {1,0};
 int* OFFSETS[] = {Loff,Uoff,Roff,Doff};
 int X = -1;
 int row1[3] = {0,0,0};
-int row2[3] = {0,X,0};
+int row2[3] = {0,-1,0};
 int row3[3] = {0,0,0};
 int* M[3] = {row1,row2,row3};
 int loc0 = 3*1+1;
@@ -85,7 +85,7 @@ int ToM(long long int N,int** M){
 }
 int cur = 0;
 int Last = 0;
-int Update(int findSol=1){
+int Update(int findSol){
     int N = Nque[cur];
     int loc = Lque[cur];
     int S = Sque[cur];
@@ -95,13 +95,15 @@ int Update(int findSol=1){
             printf("Do nothing.");
         }
         int move;
+        // char arr[]
+        // string s="";
         while (S>0)
         {
             move = (S%5) - 1;
             S = S/5;
             printf("%s",MoveNames[move]);
         }
-        printf("\nsolution occured after %d checks\n Final condition : \n",cur+1);
+        printf(" (Read this from back to front!)\nsolution occured after %d checks\n Final condition : \n",cur+1);
         ToM(N,M);
         Disp(M);
         return 1;
@@ -168,7 +170,7 @@ int main(){
     }
     int done = 0;
     for(int iterat=0;iterat<15116544;iterat++){
-        done = Update();
+        done = Update(1);
         if(done){
             break;
         }
