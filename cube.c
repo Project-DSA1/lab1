@@ -69,65 +69,73 @@ void applymove(int i){
     int* move = Moves[i];
     int* offset = Offsets[i];
     for(int i=0;i<8;i++){
-        temp[i]=c[i];
+        temp[i]=c[i]; // stores permutations (c)
     }
     for(int i=0;i<8;i++){
-        c[i] = temp[move[i]];
+        c[i] = temp[move[i]]; // c now stores the new permutation after the move
     }
     for(int i=0;i<8;i++){
-        temp[i]=x[i];
+        temp[i]=x[i]; // stores orientations (x)
     }
     for(int i=0;i<8;i++){
-        x[i] = (temp[move[i]]+offset[i])%3;
+        x[i] = (temp[move[i]]+offset[i])%3; // x now stores the new orientations after the move
     }
 };
 long int facts[8];
-long int toN(){
+long int toN(){ // 7! * (orientation index) + (permutation index) = index of cube state
+    // 
     int N = 0;
-    for(int i=2;i<8;i++){ //indexing orientations
+    for(int i=2;i<8;i++){ // indexing orientations
         N = 3*N+x[i];
     }
-    N = N*facts[7]; //facts[i] stores i factorial
+    N = N*facts[7]; // facts[i] stores i factorial, so fact[7] = 7!
     for(int i=0;i<8;i++){
-        temp[i]=c[i];
+        temp[i]=c[i]; // stores permutations
     }
-    for(int i=7;i>0;i--){
-        for(int j=1;j<=i;j++){
-            if(temp[j]>=temp[i]){temp[j]=temp[j]-1;}
+
+    // Now find the index of the permutation in all 7! permutations
+    for(int i=1;i<8;i++){
+        N += (temp[i]-1)*(facts[7-i]); //final index
+        for(int j=i+1;j<8;j++){
+            if(temp[j]>temp[i]){temp[j]=temp[j]-1;}
         }
-        N += (temp[i])*(facts[i-1]); //final index
     }
-    return N;
+    // printf("encoding done\n");
+    return N; // index of cube state = 7! * (orientation index) + (permutation index)
 }
 long int Nx;
-void toC(int N){
-    Nx = N/facts[7]; //orientation
-    N = N%facts[7]; //permutation
-    int s = 0;
+void toC(int N){ // decodes the index of the cube state
+    Nx = N/facts[7]; // orientation index
+    N = N%facts[7]; // permutation index
+    
+    int s = 0; // sum used to find x[1] as x[0]=0 always and sum of x is a multiple of 3
     for(int i=7;i>1;i--){
         x[i]=Nx%3;
         Nx=Nx/3;
         s=(s+x[i])%3;
     }
     // x[0] is always 0
-    x[1]=3-s; //sum = 0
-    for(int i=7;i>0;i--){
-        c[i]=N/facts[i-1];
-        N=N%facts[i-1];
-    }
+    x[1]=3-s; //as the sum = 0
+    // x decoded completely till here
+
     for(int i=1;i<8;i++){
-        for(int j=1;j<i;j++){
-            if(c[j]>c[i]){c[j]=c[j]+1;}
+        c[i]=N/facts[7-i]+1;
+        N=N%facts[7-i];
+    } // till here, we found c, but we need to incorporate the decrements done while encoding
+    for(int i=7;i>0;i--){
+        for(int j=7;j>i;j--){
+            if(c[j]>=c[i]){c[j]=c[j]+1;}
         }
-        c[i]=c[i]+1;
+        // c[i]=c[i]+1;
     }
+    // printf("decoding done\n");
 }
 int legal(){ //sum = 0 in orientations or permutations have repeated numbers
     for(int i=0;i<8;i++){
         temp[i]=0;
     }
     for(int i=1;i<8;i++){
-        temp[c[i]]=1;
+        temp[c[i]]=1; // stores permutations (c)
     }
     for(int i=1;i<8;i++){
         if(temp[i]==0){
@@ -181,6 +189,12 @@ int main(){
     for(int i=1;i<8;i++){
         facts[i]=facts[i-1]*i;
     }
+    /*
+    for(int i=0;i<N_maxn1;i++){
+        toC(i);
+        if(toN()!=i) printf("%ld\n", i-toN());
+    }
+    */    
 
     long int n0 = toN(); //initial state's index, this is always 0
     printf("%ld",n0);
@@ -195,6 +209,12 @@ int main(){
     applymove(0);
     applymove(1);
     applymove(2);
+    applymove(0);
+    applymove(1);
+    applymove(2);
+    applymove(0);
+    applymove(2);
+    applymove(1);
     printf("Initial state :\n\n");
     Disp();
 
@@ -268,5 +288,6 @@ int main(){
     //printf("ones : %ld\n",ones);
     //printf("twos : %ld\n",twos);
     //printf("last : %ld\n",last);
+    
     return 0;
 }
