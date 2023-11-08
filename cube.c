@@ -7,24 +7,40 @@ char C[3][8] = { //coloring
 int c[8]={0,1,2,3,4,5,6,7}; //permutation - red values in pdf (ith location pe konsa cubie number)
 int x[8]={0,0,0,0,0,0,0,0}; //orientation - (follow red cubie initial locations in pdf)
 int temp[8];
-const int m_cnt=6;
-int Moves[6][8]={ //How permutations change
-    {0,4,1,3,5,2,6,7}, //F' = f
-    {0,1,5,2,4,6,3,7}, //R' = r
-    {0,1,2,3,7,4,5,6},  //U' = u
-    {0,2,5,3,1,4,6,7}, //F
-    {0,1,3,6,4,2,5,7}, //R
-    {0,1,2,3,5,6,7,4}  //U
+const int m_cnt=9;
+int Moves[9][8]={ //How permutations change
+    {0,4,1,3,5,2,6,7}, //0 F'
+    {0,1,5,2,4,6,3,7}, //1 R'
+    {0,1,2,3,7,4,5,6}, //2 U'
+    {0,2,5,3,1,4,6,7}, //3 F
+    {0,1,3,6,4,2,5,7}, //4 R
+    {0,1,2,3,5,6,7,4}, //5 U
+    {0,5,4,3,2,1,6,7}, //6 F2
+    {0,1,6,5,4,3,2,7}, //7 R2
+    {0,1,2,3,6,7,4,5}  //8 U2
 };
-int Offsets[6][8]={ //How orientations change (+ kitna)
-    {0,0,0,0,0,0,0,0}, //F' = f
-    {0,0,2,1,0,1,2,0}, //R' = r
-    {0,0,0,0,1,2,1,2}, //U' = u
-    {0,0,0,0,0,0,0,0}, //F
-    {0,0,2,1,0,1,2,0}, //R
-    {0,0,0,0,1,2,1,2}  //U
+int Offsets[9][8]={ //How orientations change (+ kitna)
+    {0,0,0,0,0,0,0,0}, //0 F'
+    {0,0,2,1,0,1,2,0}, //1 R'
+    {0,0,0,0,1,2,1,2}, //2 U'
+    {0,0,0,0,0,0,0,0}, //3 F
+    {0,0,2,1,0,1,2,0}, //4 R
+    {0,0,0,0,1,2,1,2}, //5 U
+    {0,0,0,0,0,0,0,0}, //6 F2
+    {0,0,0,0,0,0,0,0}, //7 R2
+    {0,0,0,0,0,0,0,0}  //8 U2
 };
-char MoveNames[]={'f','r','u','F','R','U'}; // small letters are anti-clockwise, capital are clockwise moves
+char MoveNames[9][3]={
+    {'F','\'',' '},
+    {'R','\'',' '},
+    {'U','\'',' '},
+    {'F',' ',' '},
+    {'R',' ',' '},
+    {'U',' ',' '},
+    {'F','2',' '},
+    {'R','2',' '},
+    {'U','2',' '}
+    }; 
 int Faces[3][2][2]={ //These are locations (initial red cubie locations in pdf)
 { //Front
     {4,5},
@@ -186,7 +202,7 @@ void printSol(int s){ // s is the encoded move sequence (NOT the index of the cu
     }
     i--; // indexing starts from 0, we convert i from length to index so -1
     for(int j=i;j>=0;j--){
-        printf("%c",MoveNames[sol[j]]);
+        printf("%c%c%c",MoveNames[sol[j]][0],MoveNames[sol[j]][1],MoveNames[sol[j]][2]);
     }
     printf("\n");
 }
@@ -213,15 +229,15 @@ int main(){
     //     c[i]=cn[i];
     // }
     // Testcase 2: where user does front move after the above moves
-    applymove(3);
-    applymove(4);
+    applymove(7);
+    applymove(1);
+    applymove(8);
     applymove(5);
-    // applymove(0);
-    // applymove(1);
-    // applymove(2);
-    // applymove(0);
-    // applymove(2);
-    // applymove(1);
+    applymove(1);
+    applymove(7);
+    applymove(0);
+    applymove(6);
+    applymove(1);
     printf("Initial state :\n\n");
     Disp();
 
@@ -261,7 +277,8 @@ int main(){
                 Q[last]=n;
                 S[last]=(m_cnt+1)*s+move+1; // Encoding move sequence uptill now
             }
-            applymove((move+3)%6); // inverse move
+            if(move>=6) applymove(move);
+            else applymove((move+3)%6); // inverse move
         }
         //printf("movecount : %d ",movecount);
         //printf("last : %ld ",last);
