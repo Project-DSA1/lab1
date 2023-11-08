@@ -77,17 +77,7 @@ void Disp(){
         printf("\n");
     }
 }
-// void PrintCode(){
-//     printf("x :");
-//     for(int i=0;i<8;i++){
-//         printf("%d ",x[i]);
-//     }
-//     printf("\n c :");
-//     for(int i=0;i<8;i++){
-//         printf("%d ",c[i]);
-//     }
-//     printf("\n");
-// }
+
 void applymove(int i){
     int* move = Moves[i];
     int* offset = Offsets[i];
@@ -106,7 +96,6 @@ void applymove(int i){
 };
 long int facts[8];
 long int encode(){ // 7! * (orientation index) + (permutation index) = index of cube state
-    // 
     int N = 0;
     for(int i=2;i<8;i++){ // indexing orientations
         N = 3*N+x[i];
@@ -149,9 +138,7 @@ void decode(int N){ // decodes the index of the cube state
         for(int j=7;j>i;j--){
             if(c[j]>=c[i]){c[j]=c[j]+1;}
         }
-        // c[i]=c[i]+1;
     }
-    // printf("decoding done\n");
 }
 int legal(){ //sum = 0 in orientations or permutations have repeated numbers
     for(int i=0;i<8;i++){
@@ -180,21 +167,10 @@ long int cur = 0;
 long int last = 0;
 long int N_maxn1=3674160;
 
-//initial state
-// Testcase: User moves R'
-//int xn[8]={0,0,2,1,0,1,2,0}; //user input of orientations (of front and back face, order is red numbers in pdf denoting initial state)
-//int cn[8]={0,1,3,6,4,2,5,7}; //user input of permutations
-
-// Test case : Do nothing
-//  int xn[8] = {0,0,0,0,0,0,0,0};
-//  int cn[8] = {0,1,2,3,4,5,6,7};
-
-// Testcase 2 in main() function
 
 int sol[1000];
 long long int s;
 void printSol(long long int s){ // s is the encoded move sequence (NOT the index of the cube state)
-    // printf("Here\n");
     int i = 0; // calculates the number of moves in the sequence
     while(s>0){
         sol[i]= -1+s%(m_cnt+1); // -1 as we considered f to be 1 not 0 else FFR and FR would be the same number
@@ -232,52 +208,14 @@ int main(){
     for(int i=1;i<8;i++){
         facts[i]=facts[i-1]*i;
     }
-    /*
-    for(int i=0;i<N_maxn1;i++){
-        decode(i);
-        if(encode()!=i) printf("%ld\n", i-encode());
-    }
-    */    
 
     long int n0 = encode(); //initial state's index, this is always 0, we can remove this too 
-    // printf("n0 is %ld\n",n0); // this is true
     long int n;
     printf("\n");
-    // printf("%d\n",Q[0]);
     for(int i=0;i<8;i++){ 
         x[i]=ori[i]; 
         c[i]=perm[i];
     }
-    // Testcase 2: where user does front move after the above moves
-    // applymove(2);
-    // applymove(1);
-    // applymove(1);
-    // applymove(4);
-    // applymove(3);
-    // applymove(1);
-    // applymove(0);
-    // applymove(4);
-    // applymove(3);
-    // applymove(5);
-    // applymove(4);
-    // applymove(5);
-    // applymove(4);
-    // applymove(5);
-    // applymove(4);
-    // applymove(5);
-    // applymove(4);
-    // applymove(5);
-    // applymove(4);
-    // applymove(5);
-    // applymove(4);
-    // applymove(1);
-    // applymove(4);
-    // applymove(5);
-    // applymove(4);
-    // applymove(5);
-    
-    // printf("Initial state :\n\n");
-    // Disp();
 
     if(!legal()){
         printf("This isn't a legal state. That is to say; your cube cannot be solved.\n");
@@ -304,14 +242,12 @@ int main(){
                 done = 1;
                 break;
         }
-        // int movecount = 0;
         for(int move=0;move<m_cnt;move++){
             applymove(move);
             n = encode();
             if(visited[n]==0){
                 visited[n]=1;
                 last = last+1;
-                // movecount++;
                 Q[last]=n;
                 S[last]=(m_cnt+1)*s+move+1; // Encoding move sequence uptill now
             }
