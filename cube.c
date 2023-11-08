@@ -7,17 +7,24 @@ char C[3][8] = { //coloring
 int c[8]={0,1,2,3,4,5,6,7}; //permutation - red values in pdf (ith location pe konsa cubie number)
 int x[8]={0,0,0,0,0,0,0,0}; //orientation - (follow red cubie initial locations in pdf)
 int temp[8];
-int Moves[3][8]={ //How permutations change
-    {0,4,1,3,5,2,6,7}, //F
-    {0,1,5,2,4,6,3,7}, //R
-    {0,1,2,3,7,4,5,6}  //U
+const int m_cnt=6;
+int Moves[6][8]={ //How permutations change
+    {0,4,1,3,5,2,6,7}, //F' = f
+    {0,1,5,2,4,6,3,7}, //R' = r
+    {0,1,2,3,7,4,5,6},  //U' = u
+    {0,2,5,3,1,4,6,7}, //F
+    {0,1,3,6,4,2,5,7}, //R
+    {0,1,2,3,5,6,7,4}  //U
 };
-int Offsets[3][8]={ //How orientations change (+ kitna)
+int Offsets[6][8]={ //How orientations change (+ kitna)
+    {0,0,0,0,0,0,0,0}, //F' = f
+    {0,0,2,1,0,1,2,0}, //R' = r
+    {0,0,0,0,1,2,1,2}, //U' = u
     {0,0,0,0,0,0,0,0}, //F
     {0,0,2,1,0,1,2,0}, //R
     {0,0,0,0,1,2,1,2}  //U
 };
-char MoveNames[]={'F','R','U'};
+char MoveNames[]={'f','r','u','F','R','U'}; // small letters are anti-clockwise, capital are clockwise moves
 int Faces[3][2][2]={ //These are locations (initial red cubie locations in pdf)
 { //Front
     {4,5},
@@ -54,17 +61,17 @@ void Disp(){
         printf("\n");
     }
 }
-void PrintCode(){
-    printf("x :");
-    for(int i=0;i<8;i++){
-        printf("%d ",x[i]);
-    }
-    printf("\n c :");
-    for(int i=0;i<8;i++){
-        printf("%d ",c[i]);
-    }
-    printf("\n");
-}
+// void PrintCode(){
+//     printf("x :");
+//     for(int i=0;i<8;i++){
+//         printf("%d ",x[i]);
+//     }
+//     printf("\n c :");
+//     for(int i=0;i<8;i++){
+//         printf("%d ",c[i]);
+//     }
+//     printf("\n");
+// }
 void applymove(int i){
     int* move = Moves[i];
     int* offset = Offsets[i];
@@ -82,7 +89,7 @@ void applymove(int i){
     }
 };
 long int facts[8];
-long int toN(){ // 7! * (orientation index) + (permutation index) = index of cube state
+long int encode(){ // 7! * (orientation index) + (permutation index) = index of cube state
     // 
     int N = 0;
     for(int i=2;i<8;i++){ // indexing orientations
@@ -104,7 +111,7 @@ long int toN(){ // 7! * (orientation index) + (permutation index) = index of cub
     return N; // index of cube state = 7! * (orientation index) + (permutation index)
 }
 long int Nx;
-void toC(int N){ // decodes the index of the cube state
+void decode(int N){ // decodes the index of the cube state
     Nx = N/facts[7]; // orientation index
     N = N%facts[7]; // permutation index
     
@@ -150,7 +157,7 @@ int legal(){ //sum = 0 in orientations or permutations have repeated numbers
     return (s==0);
 }
 
-int visited[3674160];
+int visited[3674160]; // 3^6 * 7!
 int Q[3674160]; //This is a queue
 long int S[3674160];
 long int cur = 0;
@@ -163,21 +170,21 @@ long int N_maxn1=3674160;
 //int cn[8]={0,1,3,6,4,2,5,7}; //user input of permutations
 
 // Test case : Do nothing
- int xn[8] = {0,0,0,0,0,0,0,0};
- int cn[8] = {0,1,2,3,4,5,6,7};
+//  int xn[8] = {0,0,0,0,0,0,0,0};
+//  int cn[8] = {0,1,2,3,4,5,6,7};
 
 // Testcase 2 in main() function
 
 int sol[100];
 long int s;
-void printSol(int s){
-    int i = 0;
+void printSol(int s){ // s is the encoded move sequence (NOT the index of the cube state)
+    int i = 0; // calculates the number of moves in the sequence
     while(s>0){
-        sol[i]= -1+s%4;
+        sol[i]= -1+s%(m_cnt+1); // -1 as we considered f to be 1 not 0 else FFR and FR would be the same number
         i++;
-        s=s/4;
+        s=s/(m_cnt+1);
     }
-    i--; // As we do i++ in the end
+    i--; // indexing starts from 0, we convert i from length to index so -1
     for(int j=i;j>=0;j--){
         printf("%c",MoveNames[sol[j]]);
     }
@@ -191,30 +198,30 @@ int main(){
     }
     /*
     for(int i=0;i<N_maxn1;i++){
-        toC(i);
-        if(toN()!=i) printf("%ld\n", i-toN());
+        decode(i);
+        if(encode()!=i) printf("%ld\n", i-encode());
     }
     */    
 
-    long int n0 = toN(); //initial state's index, this is always 0
-    printf("%ld",n0);
+    long int n0 = encode(); //initial state's index, this is always 0, we can remove this too 
+    // printf("n0 is %ld\n",n0); // this is true
     long int n;
 
-    printf("%d\n",Q[0]);
-    for(int i=0;i<8;i++){
-        x[i]=xn[i];
-        c[i]=cn[i];
-    }
+    // printf("%d\n",Q[0]);
+    // for(int i=0;i<8;i++){ 
+    //     x[i]=xn[i]; 
+    //     c[i]=cn[i];
+    // }
     // Testcase 2: where user does front move after the above moves
-    applymove(0);
-    applymove(1);
-    applymove(2);
-    applymove(0);
-    applymove(1);
-    applymove(2);
-    applymove(0);
-    applymove(2);
-    applymove(1);
+    applymove(3);
+    applymove(4);
+    applymove(5);
+    // applymove(0);
+    // applymove(1);
+    // applymove(2);
+    // applymove(0);
+    // applymove(2);
+    // applymove(1);
     printf("Initial state :\n\n");
     Disp();
 
@@ -227,43 +234,44 @@ int main(){
         visited[i]=0;
     }
 
-    visited[toN()]=1;
-    Q[0]=toN(); //This is a queue
-    S[0]=0;
+    visited[encode()]=1;
+    Q[0]=encode(); //This is a queue
+    S[0]=0; // this is no moves as f corresponds to 1
 
+    // BFS
     for(int iterat=0;iterat<N_maxn1;iterat++){
         if(done){break;}
-        n = Q[cur]; //current index
-        s = S[cur]; //current solution (ab tak ka) as a number
-        toC(n); //decoding the index, this changes x and c
+        n = Q[cur]; // current index
+        s = S[cur]; // current solution (ab tak ka) as a number (ie; index of the solution TILL NOW)
+        decode(n); // decoding the index, this changes x and c
         if(n==n0){
                 printf("found solution : ");
                 printSol(s);
                 done = 1;
                 break;
         }
-        int movecount = 0;
-        for(int move=0;move<3;move++){
+        // int movecount = 0;
+        for(int move=0;move<m_cnt;move++){
             applymove(move);
-            n = toN();
+            n = encode();
             if(visited[n]==0){
                 visited[n]=1;
                 last = last+1;
-                movecount++;
+                // movecount++;
                 Q[last]=n;
-                S[last]=4*s+move+1;
+                S[last]=(m_cnt+1)*s+move+1; // Encoding move sequence uptill now
             }
-            applymove(move);applymove(move);applymove(move);//any basic move 3 times is its inverse.
+            applymove((move+3)%6); // inverse move
         }
         //printf("movecount : %d ",movecount);
         //printf("last : %ld ",last);
         //printf("cur : %ld \n",cur);
-        n = Q[cur];
-        if(visited[n]==0){
-            printf("This shouldn't be happening. A node has status 0 and is in list\n");
-            break;
-        }
-        visited[n]=2;
+        // n = Q[cur];
+        // if(visited[n]==0){
+        //     printf("This shouldn't be happening. A node has status 0 and is in list\n");
+        //     break;
+        // }
+        // visited[n]=2;
         if(cur>=last){
             printf("searched all possiblities. No solution found. This shouldn't be happening. \n");
             break;
