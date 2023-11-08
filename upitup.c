@@ -22,7 +22,7 @@ int loc0 = 3*1+1;
 int loc = 3*1+1;
 long long Nque[15116544];
 int Lque[15116544];
-int Sque[15116544];
+long long int Sque[15116544];
 int visited[15116544]; 
 void Disp(int** M){
     for(int i=0;i<3;i++){
@@ -54,23 +54,23 @@ int apply(int move,int** M,int loc){
 }
 int reachedend = 0;
 long long int encode(int** M,int loc){
-    long long int N = 0;
+    long long int NN = 0;
     int I = loc/3;
     int J = loc%3;
     for(int i=0;i<3;i++){
         for(int j=0;j<3;j++){
             if((i!=I)||(j!=J)){
-                N = 6*N + M[i][j];
+                NN = 6*NN + M[i][j];
             }
         }
     }
-    N = 9*N + 3*I+J;
-    return N;
+    NN = 9*NN + loc;
+    return NN;
 }
 int decode(long long int N,int** M){
-    int loc = N%9;
-    int I = loc/3;
-    int J = loc%3;
+    int lloc = N%9;
+    int I = lloc/3;
+    int J = lloc%3;
     N = N/9;
     for(int i=2;i>=0;i--){
         for(int j=2;j>=0;j--){
@@ -81,22 +81,23 @@ int decode(long long int N,int** M){
         }
     }
     M[I][J] = -1;
-    return loc;
+    return lloc;
 }
 int cur = 0;
 int Last = 0;
 int Update(int findSol){
-    int N = Nque[cur];
-    int loc = Lque[cur];
-    int S = Sque[cur];
-    if((findSol)&&(N<9)){
-        int sol[100];
+    long long int N = Nque[cur];
+    int lloc = Lque[cur];
+    long long int S = Sque[cur];
+    if((findSol)&&(N==4)){
+        int sol[100000];
         printf("solution: ");
         if(S==0){
             printf("Do nothing.");
         }
         int move;
         int i=0;
+        // printf("%lld",S);
         while (S>0)
         {
             move = (S%5) - 1;
@@ -116,19 +117,19 @@ int Update(int findSol){
         Disp(M);
         return 1;
     }
-    loc = decode(N,M);
+    lloc = decode(N,M);
     int locN;
     int childN;
     for(int move = 0;move<4;move++){
-        locN = apply(move,M,loc);
-        if(locN!=loc){
+        locN = apply(move,M,lloc);
+        if(locN!=lloc){
             childN = encode(M,locN);
             int vis = visited[childN];
             if(vis==0){
                 Last++;
                 Nque[Last] = childN;
                 Lque[Last] = locN;
-                Sque[Last] = 5*S+move+1;
+                Sque[Last] = 5*S+(move+1);
                 visited[childN] = 1;
             }
             apply(revMoves[move],M,locN);
@@ -143,7 +144,7 @@ int Update(int findSol){
         printf("Terminated after %d checks. All possiblities checked ",cur+1);
         if(findSol){
             printf(" and no solution found.\n");
-        } else{
+        }else{
             int checks = 0;
             int supposedtocheck = 0;
             for(int i=0;i<N_maxn1;i++){
