@@ -280,39 +280,11 @@ int main(){
             if(move>=6) applymove(move);
             else applymove((move+3)%6); // inverse move
         }
-        //printf("movecount : %d ",movecount);
-        //printf("last : %ld ",last);
-        //printf("cur : %ld \n",cur);
-        // n = Q[cur];
-        // if(visited[n]==0){
-        //     printf("This shouldn't be happening. A node has status 0 and is in list\n");
-        //     break;
-        // }
-        // visited[n]=2;
         if(cur>=last){
             printf("searched all possiblities. No solution found. This shouldn't be happening. \n");
             break;
             }
         cur++;
-        //ones=0;
-        //twos=0;
-        //for(int i=0;i<N_maxn1;i++){
-        //    if(visited[i]==2){twos++;}
-        //    else if(visited[i]==1){ones++;}
-        //}
-        //printf("ones : %ld ",ones);
-        //printf("twos : %ld ",twos);
-        //printf("last : %ld\n",last);
-    }
-    //long int ones = 0;
-    //long int twos = 0;
-    //for(int i=0;i<N_maxn1;i++){
-    //    if(visited[i]==1){ones++;}
-    //    if(visited[i]==2){twos++;}
-    //}
-    //printf("ones : %ld\n",ones);
-    //printf("twos : %ld\n",twos);
-    //printf("last : %ld\n",last);
-    
+    }    
     return 0;
 }
