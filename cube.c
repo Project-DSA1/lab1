@@ -209,8 +209,6 @@ void printSol(long long int s){ // s is the encoded move sequence (NOT the index
 }
 int done = 0;
 int main(){
-    // printf("Pick the cube. Cubie with yellow orange and green color is cubie 8.\n");
-    // printf("Which cubie has 2 faces with colors of back side and left side of cubie 8?");
 
     printf("See the pdf to know how cubie i is defined. (They are the circled in red on the image in the pdf)\n\n");
     printf("List\n");
@@ -244,8 +242,8 @@ int main(){
     long int n0 = encode(); //initial state's index, this is always 0, we can remove this too 
     // printf("n0 is %ld\n",n0); // this is true
     long int n;
-
-    printf("%d\n",Q[0]);
+    printf("\n");
+    // printf("%d\n",Q[0]);
     for(int i=0;i<8;i++){ 
         x[i]=ori[i]; 
         c[i]=perm[i];
