@@ -23,6 +23,9 @@ int loc = 3*1+1;
 long long Nque[15116544];
 int Lque[15116544];
 long long int Sque[15116544];
+long long int pred_que[15116544];
+// int SSque[15116544][36];
+long long int lenque[15116544];
 int visited[15116544]; 
 void Disp(int** M){
     for(int i=0;i<3;i++){
@@ -89,28 +92,34 @@ int Update(int findSol){
     long long int N = Nque[cur];
     int lloc = Lque[cur];
     long long int S = Sque[cur];
+    long long int lens = lenque[cur];
+    long long int predN = Nque[cur];
+    if(S<0) printf("Overflow");
     if((findSol)&&(N==4)){
         int sol[100000];
         printf("solution: ");
-        if(S==0){
+        if(lens==0){
             printf("Do nothing.");
         }
         int move;
+        // int i=0;
+        printf("\n%lld\n%lld\n",S,lens);
         int i=0;
-        // printf("%lld",S);
-        while (S>0)
-        {
-            move = (S%5) - 1;
-            S = S/5;
-            //printf("%s",MoveNames[move]);
-            sol[i]=move;
+        while(cur>0){
+            int this_move = Sque[cur];
+            sol[i] = this_move;
+            cur = pred_que[cur];
             i++;
         }
+
+        int ii = i;
         while (i>0)
         {
             i--;
             printf("%s",MoveNames[sol[i]]);
+
         }
+        
         
         printf("\nsolution occured after %d checks\n Final condition : \n",cur+1);
         decode(N,M);
@@ -129,7 +138,9 @@ int Update(int findSol){
                 Last++;
                 Nque[Last] = childN;
                 Lque[Last] = locN;
-                Sque[Last] = 5*S+(move+1);
+                Sque[Last] = move;
+                pred_que[Last] = cur;
+                lenque[Last] = lens + 1;
                 visited[childN] = 1;
             }
             apply(revMoves[move],M,locN);
@@ -188,6 +199,8 @@ int main(){
     Nque[0] = encode(M,loc);
     Lque[0] = loc;
     Sque[0] = 0;
+    lenque[0] = 0;
+    pred_que[0] = 0;
     for(int N=1;N<N_maxn1;N++){
         visited[N]=0;
     }
@@ -200,3 +213,5 @@ int main(){
     }
     return 0;
 }
+
+// URDLDRURDLURULLDRDLURULDRULDRDLURRDL
