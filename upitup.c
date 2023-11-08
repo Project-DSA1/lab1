@@ -53,7 +53,7 @@ int apply(int move,int** M,int loc){
     return loc;
 }
 int reachedend = 0;
-long long int ToN(int** M,int loc){
+long long int encode(int** M,int loc){
     long long int N = 0;
     int I = loc/3;
     int J = loc%3;
@@ -67,7 +67,7 @@ long long int ToN(int** M,int loc){
     N = 9*N + 3*I+J;
     return N;
 }
-int ToM(long long int N,int** M){
+int decode(long long int N,int** M){
     int loc = N%9;
     int I = loc/3;
     int J = loc%3;
@@ -112,17 +112,17 @@ int Update(int findSol){
         }
         
         printf("\nsolution occured after %d checks\n Final condition : \n",cur+1);
-        ToM(N,M);
+        decode(N,M);
         Disp(M);
         return 1;
     }
-    loc = ToM(N,M);
+    loc = decode(N,M);
     int locN;
     int childN;
     for(int move = 0;move<4;move++){
         locN = apply(move,M,loc);
         if(locN!=loc){
-            childN = ToN(M,locN);
+            childN = encode(M,locN);
             int vis = visited[childN];
             if(vis==0){
                 Last++;
@@ -183,8 +183,8 @@ int main(){
     printf("The initial situation given :\n");
     Disp(M);
     printf("\n");
-    visited[ToN(M,loc)] = 1;
-    Nque[0] = ToN(M,loc);
+    visited[encode(M,loc)] = 1;
+    Nque[0] = encode(M,loc);
     Lque[0] = loc;
     Sque[0] = 0;
     for(int N=1;N<N_maxn1;N++){
