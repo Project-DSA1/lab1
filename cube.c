@@ -210,13 +210,13 @@ void printSol(long long int s){ // s is the encoded move sequence (NOT the index
 int done = 0;
 int main(){
 
-    printf("See the pdf to know how cubie i is defined. (They are the circled in red on the image in the pdf)\n\n");
+    printf("See the cube_image to know how cubie i is defined. (They are the numbers circled in red)\n\n");
     printf("List\n");
     printf("ygo = 0\nwog = 1\nwgr = 2\nyrg = 3\nwbo = 4\nwrb = 5\nybr = 6\nyob = 7\n\n");
     int perm[8] = {0,0,0,0,0,0,0,0};
     int ori[8] = {0,0,0,0,0,0,0,0};
     printf("Hold the cube such that cubie 0 is yellow, green and orange, with yellow face at the back. See the front and the back faces. Now, they are fixed. Also, we have fixed the position and orientation of cubie 0. (At 0,0)\n\n");
-    printf("For orientations, follow the 3 letter index that you chose in the list given above. Consider the white/yellow face to be 0. Now the other faces are 1 and 2 cyclically. What is the number (0/1/2) on the front/back face? This is the orientation.\n\n");
+    printf("For orientations, follow the 3 letter index that you chose in the list given above. Consider the white/yellow face to be 0. Now the other faces are 1 and 2 based on their index in the 3 letter word (starting from 0). What is the number (0/1/2) on the front/back face? This is the orientation.\n\n");
     for(int i=1;i<8;i++){
         printf("Enter the cubie %d, based on the indexing given above: ",i);
         int inp = 0;
