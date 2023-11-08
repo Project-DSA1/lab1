@@ -77,6 +77,7 @@ void Disp(){
         printf("\n");
     }
 }
+
 // void PrintCode(){
 //     printf("x :");
 //     for(int i=0;i<8;i++){
@@ -88,6 +89,7 @@ void Disp(){
 //     }
 //     printf("\n");
 // }
+
 void applymove(int i){
     int* move = Moves[i];
     int* offset = Offsets[i];
