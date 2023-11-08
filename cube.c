@@ -216,7 +216,7 @@ int main(){
     int perm[8] = {0,0,0,0,0,0,0,0};
     int ori[8] = {0,0,0,0,0,0,0,0};
     printf("Hold the cube such that cubie 0 is yellow, green and orange, with yellow face at the back. See the front and the back faces. Now, they are fixed. Also, we have fixed the position and orientation of cubie 0. (At 0,0)\n\n");
-    printf("For orientations, follow the 3 letter index that you chose in the list given above. Consider the white/yellow face to be 0. Now the other faces are 1 and 2 based on their index in the 3 letter word (starting from 0). What is the number (0/1/2) on the front/back face? This is the orientation.\n\n");
+    printf("For orientations, follow the 3 letter index that you chose in the list given above. Consider the white/yellow face to be 0. Now the other faces are 1 and 2 based on their index in the 3 letter word (starting from 0). What is the number (0/1/2) on the front/back face? This is the orientation. For example, consider the cubie wog. Here, white=0, orange=1 and green=2. Now, if orange is on the back face, the orientation is 1.\n\n");
     for(int i=1;i<8;i++){
         printf("Enter the cubie %d, based on the indexing given above: ",i);
         int inp = 0;
