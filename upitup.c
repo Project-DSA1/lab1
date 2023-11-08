@@ -90,19 +90,27 @@ int Update(int findSol){
     int loc = Lque[cur];
     int S = Sque[cur];
     if((findSol)&&(N<9)){
-        printf("solution (operation order is from right to left): ");
+        int sol[100];
+        printf("solution: ");
         if(S==0){
             printf("Do nothing.");
         }
         int move;
-        // char arr[]
-        // string s="";
+        int i=0;
         while (S>0)
         {
             move = (S%5) - 1;
             S = S/5;
-            printf("%s",MoveNames[move]);
+            //printf("%s",MoveNames[move]);
+            sol[i]=move;
+            i++;
         }
+        while (i>0)
+        {
+            i--;
+            printf("%s",MoveNames[sol[i]]);
+        }
+        
         printf("\nsolution occured after %d checks\n Final condition : \n",cur+1);
         ToM(N,M);
         Disp(M);
@@ -152,11 +160,25 @@ int Update(int findSol){
     return 0;
 }
 int main(){
-    int inputSeq[] = {0,1,2,3,2,1}; 
     int move;
-    for(int i=0;i<sizeof(inputSeq)/sizeof(1);i++){
-        move = inputSeq[i];
-        loc = apply(move,M,loc);
+    printf("enter the orientations of painted faces of boxes (3 in a row) according to this scheme:\n");
+    printf("0 for facing up,\n");
+    printf("1 for facing left,\n");
+    printf("2 for facing away from you,\n");
+    printf("3 for facing down,\n");
+    printf("4 for facing right,\n");
+    printf("5 for facing towards you,\n");
+    printf(" and -1 if there is there is no box.\n");
+    for(int i=0;i<3;i++){
+        printf("row %d :\n",i+1);
+        for(int j=0;j<3;j++){
+            printf("enter move :");
+            scanf("%d",&move);
+            if(move==-1){
+                loc = 3*i + j;
+            }
+            M[i][j]=move;
+        }
     }
     printf("The initial situation given :\n");
     Disp(M);
