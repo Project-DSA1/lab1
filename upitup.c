@@ -103,11 +103,11 @@ int Update(int findSol){
         }
         int move;
         // int i=0;
-        printf("\n%lld\n%lld\n",S,lens);
+        // printf("\n%lld\n%lld\n",S,lens);
         int i=0;
         while(cur>0){
             int this_move = Sque[cur];
-            sol[i] = this_move;
+            sol[i] = cur; // mai konse index se aaya (queue me se)
             cur = pred_que[cur];
             i++;
         }
@@ -116,14 +116,22 @@ int Update(int findSol){
         while (i>0)
         {
             i--;
-            printf("%s",MoveNames[sol[i]]);
+            printf("%s",MoveNames[Sque[sol[i]]]);
 
         }
+        printf("\n\n");
+        printf("The boards are: \n\n");
+
+        while(ii>0){
+            ii--;
+            decode(Nque[sol[ii]],M);
+            Disp(M);
+            printf("\n");
+        }
         
-        
-        printf("\nsolution occured after %d checks\n Final condition : \n",cur+1);
-        decode(N,M);
-        Disp(M);
+        // printf("\nsolution occured after %d checks\n Final condition : \n",cur+1);
+        // decode(N,M);
+        // Disp(M);
         return 1;
     }
     lloc = decode(N,M);
@@ -180,7 +188,7 @@ int main(){
     printf("3 for facing down,\n");
     printf("4 for facing right,\n");
     printf("5 for facing towards you,\n");
-    printf(" and -1 if there is there is no box.\n");
+    printf("-1 if there is there is no box.\n");
     for(int i=0;i<3;i++){
         printf("row %d :\n",i+1);
         for(int j=0;j<3;j++){
@@ -214,4 +222,5 @@ int main(){
     return 0;
 }
 
+// Solution to CCL's upitup game: 
 // URDLDRURDLURULLDRDLURULDRULDRDLURRDL
