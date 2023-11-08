@@ -151,12 +151,12 @@ long int N_maxn1=3674160;
 
 //initial state
 // Testcase: User moves R'
-int xn[8]={0,0,2,1,0,1,2,0}; //user input of orientations (of front and back face, order is red numbers in pdf denoting initial state)
-int cn[8]={0,1,3,6,4,2,5,7}; //user input of permutations
+//int xn[8]={0,0,2,1,0,1,2,0}; //user input of orientations (of front and back face, order is red numbers in pdf denoting initial state)
+//int cn[8]={0,1,3,6,4,2,5,7}; //user input of permutations
 
-// Testcase: User 
-// int xn[8] = {0,0,0,0,0,0,0,0};
-// int cn[8] = {0,1,2,3,4,5,6,7};
+// Test case : Do nothing
+ int xn[8] = {0,0,0,0,0,0,0,0};
+ int cn[8] = {0,1,2,3,4,5,6,7};
 
 // Testcase 2 in main() function
 
@@ -183,15 +183,18 @@ int main(){
     }
 
     long int n0 = toN(); //initial state's index, this is always 0
+    printf("%ld",n0);
     long int n;
 
-    printf("%ld\n",Q[0]);
+    printf("%d\n",Q[0]);
     for(int i=0;i<8;i++){
         x[i]=xn[i];
         c[i]=cn[i];
     }
     // Testcase 2: where user does front move after the above moves
-    // applymove(0);
+    applymove(0);
+    applymove(1);
+    applymove(2);
     printf("Initial state :\n\n");
     Disp();
 
@@ -207,6 +210,7 @@ int main(){
     visited[toN()]=1;
     Q[0]=toN(); //This is a queue
     S[0]=0;
+
     for(int iterat=0;iterat<N_maxn1;iterat++){
         if(done){break;}
         n = Q[cur]; //current index
@@ -218,25 +222,51 @@ int main(){
                 done = 1;
                 break;
         }
+        int movecount = 0;
         for(int move=0;move<3;move++){
             applymove(move);
             n = toN();
             if(visited[n]==0){
-                last++;
+                visited[n]=1;
+                last = last+1;
+                movecount++;
                 Q[last]=n;
                 S[last]=4*s+move+1;
-                visited[n]=1;
             }
             applymove(move);applymove(move);applymove(move);//any basic move 3 times is its inverse.
-
         }
-        visited[cur]=2;
-        if(cur==last){
+        //printf("movecount : %d ",movecount);
+        //printf("last : %ld ",last);
+        //printf("cur : %ld \n",cur);
+        n = Q[cur];
+        if(visited[n]==0){
+            printf("This shouldn't be happening. A node has status 0 and is in list\n");
+            break;
+        }
+        visited[n]=2;
+        if(cur>=last){
             printf("searched all possiblities. No solution found. This shouldn't be happening. \n");
             break;
             }
         cur++;
+        //ones=0;
+        //twos=0;
+        //for(int i=0;i<N_maxn1;i++){
+        //    if(visited[i]==2){twos++;}
+        //    else if(visited[i]==1){ones++;}
+        //}
+        //printf("ones : %ld ",ones);
+        //printf("twos : %ld ",twos);
+        //printf("last : %ld\n",last);
     }
-    
+    //long int ones = 0;
+    //long int twos = 0;
+    //for(int i=0;i<N_maxn1;i++){
+    //    if(visited[i]==1){ones++;}
+    //    if(visited[i]==2){twos++;}
+    //}
+    //printf("ones : %ld\n",ones);
+    //printf("twos : %ld\n",twos);
+    //printf("last : %ld\n",last);
     return 0;
 }
